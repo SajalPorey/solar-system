@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SOLARIS — an interactive 3D Solar System Explorer. Fly through space, explore all 8 planets and their orbital data rendered in real-time 3D." />
+  <title>SOLARIS — Interactive Solar System Explorer</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+
+  <!--
+    GSAP loaded synchronously (no defer, no async) so window.gsap is guaranteed
+    available when any ES module runs. Must be before the importmap.
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SPLASH / OPENING SCREEN
+       Shown on page load. Three.js scene renders behind it.
+       JS activates the ENTER button when the scene is ready.
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="splash-screen" role="dialog" aria-modal="true" aria-label="SOLARIS opening screen">
+
+    <!-- Decorative animated rings (CSS only, aria-hidden) -->
+    <div class="splash-ring splash-ring--lg" aria-hidden="true"></div>
+    <div class="splash-ring splash-ring--md" aria-hidden="true"></div>
+    <div class="splash-ring splash-ring--sm" aria-hidden="true"></div>
+
+    <!-- Central content block -->
+    <div class="splash-content">
+      <p class="splash-eyebrow">DEEP SPACE MISSION CONTROL</p>
+
+      <h1 class="splash-title" aria-label="SOLARIS">
+        <span class="splash-sol">SOL</span><span class="splash-aris">ARIS</span>
+      </h1>
+
+      <p class="splash-tagline">EXPLORE OUR SOLAR SYSTEM</p>
+
+      <div class="splash-rule" aria-hidden="true"></div>
+
+      <button id="enter-btn" class="enter-btn" disabled aria-label="Enter SOLARIS">
+        <!-- Spinning gradient border via ::before/::after (pure CSS) -->
+        <span id="enter-label" class="enter-label">INITIALISING</span>
+        <svg class="enter-arrow" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </div>
+  </div><!-- /splash-screen -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       THREE.JS CANVAS — always rendered, behind all overlays
+  ═══════════════════════════════════════════════════════════════ -->
+  <canvas id="solaris-canvas" aria-label="Interactive 3D solar system"></canvas>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HOVER CARD — floats near hovered planet (positioned via JS)
+       Hidden by default; JS adds/removes .hc--visible
+  ═══════════════════════════════════════════════════════════════ -->
+  <aside id="hover-card" class="hover-card" role="tooltip" aria-live="polite" aria-atomic="true">
+    <div class="hc-header">
+      <span id="hc-name"  class="hc-name"></span>
+      <span id="hc-order" class="hc-order"></span>
+    </div>
+    <div class="hc-sep" aria-hidden="true"></div>
+    <div class="hc-stats">
+      <div class="hc-stat">
+        <span class="hc-lbl">MOONS</span>
+        <span id="hc-moons" class="hc-val"></span>
+      </div>
+      <div class="hc-stat">
+        <span class="hc-lbl">AVG TEMP</span>
+        <span id="hc-temp" class="hc-val"></span>
+      </div>
+      <div class="hc-stat">
+        <span class="hc-lbl">DISTANCE</span>
+        <span id="hc-dist" class="hc-val"></span>
+      </div>
+    </div>
+    <p class="hc-cta" aria-hidden="true">Click to explore →</p>
+  </aside>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       PLANET DETAIL PANEL — slides up from bottom on planet click
+       JS adds/removes .dp--visible
+  ═══════════════════════════════════════════════════════════════ -->
+  <section id="detail-panel" class="detail-panel"
+           aria-label="Planet detail" aria-hidden="true">
+
+    <!-- Top bar: back button + planet name -->
+    <div class="dp-topbar">
+      <button id="dp-back" class="dp-back" aria-label="Back to solar system overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" width="13" height="13" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"/>
+          <polyline points="12 19 5 12 12 5"/>
+        </svg>
+        SOLAR SYSTEM
+      </button>
+
+      <div class="dp-title-wrap">
+        <span id="dp-order" class="dp-order-tag"></span>
+        <span id="dp-name"  class="dp-planet-name"></span>
+      </div>
+    </div>
+
+    <!-- Stats grid: 3 columns × 2 rows -->
+    <div class="dp-stats-grid">
+      <div class="dp-stat">
+        <div class="dp-stat-label">DIAMETER</div>
+        <div id="dp-diameter" class="dp-stat-value"></div>
+        <div class="dp-stat-unit">km</div>
+      </div>
+      <div class="dp-stat">
+        <div class="dp-stat-label">DAY LENGTH</div>
+        <div id="dp-day"      class="dp-stat-value"></div>
+        <div class="dp-stat-unit">hours</div>
+      </div>
+      <div class="dp-stat">
+        <div class="dp-stat-label">YEAR LENGTH</div>
+        <div id="dp-year"     class="dp-stat-value"></div>
+        <div class="dp-stat-unit">Earth days</div>
+      </div>
+      <div class="dp-stat">
+        <div class="dp-stat-label">MOONS</div>
+        <div id="dp-moons"    class="dp-stat-value"></div>
+        <div class="dp-stat-unit">satellites</div>
+      </div>
+      <div class="dp-stat">
+        <div class="dp-stat-label">AVG TEMPERATURE</div>
+        <div id="dp-temp"     class="dp-stat-value"></div>
+        <div class="dp-stat-unit">°C surface</div>
+      </div>
+      <div class="dp-stat">
+        <div class="dp-stat-label">DISTANCE FROM SUN</div>
+        <div id="dp-dist"     class="dp-stat-value"></div>
+        <div class="dp-stat-unit">million km</div>
+      </div>
+    </div>
+
+    <!-- Atmosphere row -->
+    <div class="dp-atmo-row">
+      <span class="dp-stat-label">ATMOSPHERE</span>
+      <div id="dp-atmo" class="dp-atmo-tags"></div>
+    </div>
+
+    <!-- Missions section -->
+    <div id="dp-missions-section" class="dp-missions-section" style="display:none">
+      <div class="dp-section-header">
+        <span class="dp-stat-label">EXPLORATION MISSIONS</span>
+        <span id="dp-missions-count" class="dp-count-badge">0</span>
+      </div>
+      <div id="dp-mission-list" class="dp-mission-list"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="dp-actions">
+      <button id="btn-orbit"   class="dp-action dp-action--secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" width="14" height="14" aria-hidden="true">
+          <ellipse cx="12" cy="12" rx="10" ry="4.5" transform="rotate(-25 12 12)"/>
+          <circle cx="19" cy="8.5" r="1.5" fill="currentColor"/>
+        </svg>
+        ORBIT
+      </button>
+      <button id="btn-explore" class="dp-action dp-action--primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.5" width="14" height="14" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/>
+          <line x1="8"  y1="11" x2="14" y2="11"/>
+        </svg>
+        EXPLORE
+      </button>
+    </div>
+
+  </section><!-- /detail-panel -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       MISSION DETAIL CARD — modal popup on clicking a mission
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="mission-card" class="mission-card" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="mc-header">
+      <div class="mc-title-group">
+        <h3 id="mc-name" class="mc-name">MISSION NAME</h3>
+        <div class="mc-meta-row">
+          <span id="mc-agency" class="mc-agency">AGENCY</span>
+          <span class="mc-dot">·</span>
+          <span id="mc-year" class="mc-year">LAUNCH</span>
+        </div>
+      </div>
+      <button id="mc-close" class="mc-close-btn" aria-label="Close mission card">✕</button>
+    </div>
+    <div class="mc-body">
+      <div id="mc-status" class="mc-status-chip">STATUS</div>
+      <p id="mc-summary" class="mc-summary"></p>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HUD — fixed top bar (wordmark + search)
+  ═══════════════════════════════════════════════════════════════ -->
+  <header id="hud" class="hud" role="banner">
+
+    <!-- Wordmark (left) -->
+    <div class="hud-wordmark" id="hud-wordmark" aria-label="SOLARIS">
+      <span class="wordmark-sol">SOL</span><span class="wordmark-aris">ARIS</span>
+    </div>
+
+    <!-- Search bar (right) -->
+    <div id="search-container" class="search-container" role="search">
+      <label for="search-input" class="sr-only">Search planets</label>
+      <div class="search-wrap">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Search planets…"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search planets"
+          aria-autocomplete="list"
+          aria-controls="search-dropdown"
+          aria-expanded="false"
+        />
+      </div>
+      <ul id="search-dropdown" class="search-dropdown"
+          role="listbox" aria-label="Planet suggestions"></ul>
+    </div>
+
+  </header><!-- /hud -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       TIME MACHINE — fixed bottom bar
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="time-machine" class="time-machine" role="group" aria-label="Time speed controls">
+
+    <!-- Left: live date -->
+    <div class="tm-date-block">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="1.5" width="13" height="13" class="tm-clock-icon" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      <span id="tm-date" class="tm-date">JAN 1, 2025</span>
+    </div>
+
+    <!-- Center: slider + speed label -->
+    <div class="tm-center">
+      <div class="tm-slider-row">
+        <span class="tm-tick">1×</span>
+        <input
+          type="range"
+          id="time-slider"
+          class="tm-slider"
+          min="0" max="3" step="1" value="0"
+          aria-label="Time speed multiplier"
+          aria-valuetext="1x real time"
+        />
+        <span class="tm-tick">1K×</span>
+      </div>
+      <span id="tm-speed-label" class="tm-speed-label">1× REAL TIME</span>
+    </div>
+
+    <!-- Right: nav hints -->
+    <div class="tm-hints" aria-hidden="true">
+      <span>DRAG</span>
+      <span class="tm-dot">·</span>
+      <span>SCROLL</span>
+      <span class="tm-dot">·</span>
+      <span>RIGHT-DRAG</span>
+    </div>
+
+  </div><!-- /time-machine -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       AUDIO TOGGLE — fixed bottom-left corner
+       AudioManager (js/audio.js) drives icon state + fade-in/out.
+       Starts muted; user must click to unmute (browser autoplay policy).
+  ═══════════════════════════════════════════════════════════════ -->
+  <button
+    id="audio-toggle"
+    class="audio-toggle"
+    aria-label="Toggle ambient audio"
+    title="Toggle ambient audio"
+  >
+    <!-- Muted icon (shown by default) -->
+    <svg class="at-muted" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5"
+         width="15" height="15" aria-hidden="true">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>
+    </svg>
+    <!-- Unmuted icon (hidden until user activates audio) -->
+    <svg class="at-unmuted" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.5"
+         width="15" height="15" aria-hidden="true" style="display:none">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+  </button>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SOLARIS AI ASSISTANT — floating bottom-right chat widget
+  ═══════════════════════════════════════════════════════════════ -->
+  <div id="ai-widget" class="ai-widget" style="display:none">
+    <!-- Chat Panel -->
+    <div id="ai-panel" class="ai-panel" role="region" aria-label="SOLARIS AI Chat" aria-hidden="true">
+      <div class="ai-header">
+        <div class="ai-header-title">
+          <span class="ai-glow-dot"></span>
+          <span class="ai-title-text">SOLARIS AI</span>
+          <span class="ai-badge">SPACE GUIDE</span>
+        </div>
+        <button id="ai-close-btn" class="ai-close-btn" aria-label="Close AI chat">✕</button>
+      </div>
+
+      <!-- Message Log -->
+      <div id="ai-log" class="ai-log" role="log" aria-live="polite"></div>
+
+      <!-- Input Row -->
+      <div class="ai-input-row">
+        <input type="text" id="ai-query-input" class="ai-query-input" placeholder="Ask anything or 'Take me to Mars'..." autocomplete="off" />
+        <button id="ai-send-btn" class="ai-send-btn" aria-label="Send query">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" aria-hidden="true">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Floating Action Button (FAB) -->
+    <button id="ai-fab-btn" class="ai-fab-btn" aria-label="Open SOLARIS AI assistant" aria-expanded="false" title="Ask SOLARIS AI">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18" aria-hidden="true">
+        <path d="M12 2a10 10 0 0 1 10 10c0 5.523-4.477 10-10 10a9.96 9.96 0 0 1-4.708-1.175L2 22l1.175-5.292A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2z"></path>
+        <circle cx="8" cy="12" r="1.2" fill="currentColor"></circle>
+        <circle cx="12" cy="12" r="1.2" fill="currentColor"></circle>
+        <circle cx="16" cy="12" r="1.2" fill="currentColor"></circle>
+      </svg>
+    </button>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       THREE.JS + APP BOOTSTRAP
+  ═══════════════════════════════════════════════════════════════ -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three":         "https://unpkg.com/three@0.165.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.165.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
