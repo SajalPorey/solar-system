@@ -1,0 +1,218 @@
+{
+  "mercury": [
+    {
+      "id": "mariner10",
+      "name": "Mariner 10",
+      "agency": "NASA",
+      "launched": 1973,
+      "status": "Complete",
+      "summary": "First spacecraft to visit Mercury. Made three flybys in 1974–1975, revealing a heavily cratered, Moon-like surface and a surprisingly strong magnetic field."
+    },
+    {
+      "id": "messenger",
+      "name": "MESSENGER",
+      "agency": "NASA",
+      "launched": 2004,
+      "status": "Complete",
+      "summary": "First spacecraft to orbit Mercury (2011–2015). Confirmed water-ice deposits in permanently shadowed polar craters and mapped the entire surface in detail."
+    },
+    {
+      "id": "bepicolombo",
+      "name": "BepiColombo",
+      "agency": "ESA / JAXA",
+      "launched": 2018,
+      "status": "En Route",
+      "summary": "Joint ESA–JAXA mission composed of two orbiters. Performing multiple Venus and Mercury gravity assists; expected to enter Mercury orbit in November 2026."
+    }
+  ],
+  "venus": [
+    {
+      "id": "mariner2",
+      "name": "Mariner 2",
+      "agency": "NASA",
+      "launched": 1962,
+      "status": "Complete",
+      "summary": "Humanity's first successful interplanetary mission. Flew past Venus in December 1962, confirming surface temperatures exceeding 425 °C and a dense carbon-dioxide atmosphere."
+    },
+    {
+      "id": "venera13",
+      "name": "Venera 13",
+      "agency": "Soviet Union",
+      "launched": 1981,
+      "status": "Complete",
+      "summary": "Survived on Venus's surface for 127 minutes — a record. Returned the first colour images from the Venusian surface and analysed soil composition in situ."
+    },
+    {
+      "id": "magellan",
+      "name": "Magellan",
+      "agency": "NASA",
+      "launched": 1989,
+      "status": "Complete",
+      "summary": "Radar-mapped 98 % of Venus's surface at high resolution from 1990 to 1994, revealing thousands of volcanoes, lava plains, and unique 'corona' structures."
+    },
+    {
+      "id": "davinci",
+      "name": "DAVINCI+",
+      "agency": "NASA",
+      "launched": null,
+      "status": "Planned ~2031",
+      "summary": "Will drop an instrumented descent sphere through Venus's atmosphere to analyse its composition layer by layer, plus image the enigmatic tessera highlands from orbit."
+    }
+  ],
+  "earth": [
+    {
+      "id": "iss",
+      "name": "Int'l Space Station",
+      "agency": "NASA / ESA / ROSCOSMOS / JAXA / CSA",
+      "launched": 1998,
+      "status": "Active",
+      "summary": "Continuously inhabited since November 2000. Orbiting at ~400 km altitude, it serves as a world-class microgravity laboratory and international cooperation symbol."
+    },
+    {
+      "id": "hubble",
+      "name": "Hubble Space Telescope",
+      "agency": "NASA / ESA",
+      "launched": 1990,
+      "status": "Active",
+      "summary": "One of the most productive scientific instruments ever built. From low Earth orbit it has produced iconic deep-field images and refined the Hubble constant."
+    },
+    {
+      "id": "james-webb",
+      "name": "James Webb ST",
+      "agency": "NASA / ESA / CSA",
+      "launched": 2021,
+      "status": "Active",
+      "summary": "Operating at the L2 Lagrange point, 1.5 million km from Earth. Its 6.5 m gold mirror captures infrared light from the first galaxies and nearby exoplanet atmospheres."
+    }
+  ],
+  "mars": [
+    {
+      "id": "curiosity",
+      "name": "Curiosity Rover",
+      "agency": "NASA",
+      "launched": 2011,
+      "status": "Active",
+      "summary": "Has driven 30+ km inside Gale Crater since landing in 2012. Confirmed ancient lake environments capable of supporting microbial life and detected complex organics."
+    },
+    {
+      "id": "perseverance",
+      "name": "Perseverance Rover",
+      "agency": "NASA",
+      "launched": 2020,
+      "status": "Active",
+      "summary": "Collecting rock cores in Jezero Crater for a future Earth-return mission. Generated the first oxygen from the Martian atmosphere (MOXIE experiment) in 2021."
+    },
+    {
+      "id": "ingenuity",
+      "name": "Ingenuity Helicopter",
+      "agency": "NASA",
+      "launched": 2020,
+      "status": "Mission Complete",
+      "summary": "First powered aircraft on another planet. Exceeded its planned five flights with 72 flights totalling over 2 hours of flight time before a rotor blade was damaged."
+    },
+    {
+      "id": "hope",
+      "name": "Hope Probe (Amal)",
+      "agency": "UAE",
+      "launched": 2020,
+      "status": "Active",
+      "summary": "The Arab world's first interplanetary mission. Orbiting Mars since February 2021, studying its daily and seasonal weather patterns and the escape of hydrogen and oxygen."
+    }
+  ],
+  "jupiter": [
+    {
+      "id": "pioneer10",
+      "name": "Pioneer 10",
+      "agency": "NASA",
+      "launched": 1972,
+      "status": "Complete",
+      "summary": "First spacecraft to cross the asteroid belt and fly past Jupiter (1973). Carried the famous gold-anodized Pioneer plaque bearing a message for any extra-terrestrial finders."
+    },
+    {
+      "id": "voyager1",
+      "name": "Voyager 1",
+      "agency": "NASA",
+      "launched": 1977,
+      "status": "Interstellar Space",
+      "summary": "Flew past Jupiter in 1979, discovering active volcanoes on Io and complex ring structures. Now the most distant human-made object, 24 billion km from the Sun."
+    },
+    {
+      "id": "galileo",
+      "name": "Galileo",
+      "agency": "NASA",
+      "launched": 1989,
+      "status": "Complete",
+      "summary": "Orbited Jupiter from 1995 to 2003. Discovered strong evidence for a liquid-water ocean beneath Europa's icy crust and a metallic core inside Io. Deorbited deliberately."
+    },
+    {
+      "id": "juno",
+      "name": "Juno",
+      "agency": "NASA",
+      "launched": 2011,
+      "status": "Active",
+      "summary": "In a polar orbit that takes it within 4,200 km of Jupiter's cloud tops. Mapping the gravity and magnetic fields to understand what lies beneath the visible atmosphere."
+    },
+    {
+      "id": "europa-clipper",
+      "name": "Europa Clipper",
+      "agency": "NASA",
+      "launched": 2024,
+      "status": "En Route",
+      "summary": "Will perform 49 close flybys of Europa from Jupiter orbit, assessing whether its subsurface ocean could support life. Arrives at Jupiter in April 2030."
+    }
+  ],
+  "saturn": [
+    {
+      "id": "pioneer11",
+      "name": "Pioneer 11",
+      "agency": "NASA",
+      "launched": 1973,
+      "status": "Complete",
+      "summary": "First spacecraft to visit Saturn (1979). Discovered the F ring and measured temperatures in the upper atmosphere for the first time."
+    },
+    {
+      "id": "voyager2",
+      "name": "Voyager 2",
+      "agency": "NASA",
+      "launched": 1977,
+      "status": "Interstellar Space",
+      "summary": "Flew past Saturn in 1981. Returned stunning images of the ring structure, revealed braided structures in the F ring, and discovered three previously unknown moons."
+    },
+    {
+      "id": "cassini",
+      "name": "Cassini–Huygens",
+      "agency": "NASA / ESA / ASI",
+      "launched": 1997,
+      "status": "Complete",
+      "summary": "Orbited Saturn from 2004 to 2017 — 13 remarkable years. The Huygens probe landed on Titan's methane lakes. Discovered active cryo-geysers on Enceladus hinting at a subsurface ocean."
+    },
+    {
+      "id": "dragonfly",
+      "name": "Dragonfly",
+      "agency": "NASA",
+      "launched": null,
+      "status": "Planned ~2034",
+      "summary": "A nuclear-powered dual-quadcopter rotorcraft destined for Titan. Will hop between sites to sample the prebiotic chemistry in Titan's nitrogen-rich atmosphere and hydrocarbon seas."
+    }
+  ],
+  "uranus": [
+    {
+      "id": "voyager2-uranus",
+      "name": "Voyager 2",
+      "agency": "NASA",
+      "launched": 1977,
+      "status": "Interstellar Space",
+      "summary": "The only spacecraft ever to visit Uranus (January 1986). Discovered 10 new moons and 2 new rings, and found that Uranus's magnetic field is oddly tilted 59° from its rotation axis."
+    }
+  ],
+  "neptune": [
+    {
+      "id": "voyager2-neptune",
+      "name": "Voyager 2",
+      "agency": "NASA",
+      "launched": 1977,
+      "status": "Interstellar Space",
+      "summary": "The only spacecraft ever to visit Neptune (August 1989). Discovered 6 new moons, 4 faint rings, the Great Dark Spot (a storm larger than Earth), and geysers erupting from Triton's surface."
+    }
+  ]
+}
